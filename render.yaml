@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: zillow-scraper-service
+    runtime: node
+    plan: starter
+    healthCheckPath: /health
+    buildCommand: npm install && npx playwright install chromium
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: API_KEY
+        sync: false
