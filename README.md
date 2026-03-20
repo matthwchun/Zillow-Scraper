@@ -60,7 +60,7 @@ The server listens on `PORT` (default `3000`).
 3. **Build command:**
 
    ```bash
-   npm install && npx playwright install chromium
+   npm install && npx playwright install chromium chromium-headless-shell
    ```
 
 4. **Start command:**
@@ -69,10 +69,19 @@ The server listens on `PORT` (default `3000`).
    npm start
    ```
 
-5. Add environment variable **`API_KEY`** (strong random string).
-6. Deploy. Note the public URL for n8n.
+5. **Environment variables** (Render → **Environment**):
 
-`npm install` already triggers `playwright install chromium` via `postinstall`; the explicit `npx playwright install chromium` in the build command ensures Chromium is present on Render’s Linux image even if you change install scripts later.
+   | Key | Value |
+   |-----|--------|
+   | **`API_KEY`** | Your secret (required). |
+   | **`NODE_VERSION`** | `20` (if not already set by the stack). |
+   | **`PLAYWRIGHT_BROWSERS_PATH`** | **`0`** — stores Chromium under `node_modules` so it is **shipped with the deploy**. Without this, Playwright often looks in `~/.cache`, which may be empty at runtime and triggers *“Executable doesn’t exist … chromium_headless_shell”*. |
+
+   Do **not** set **`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`** on Render.
+
+6. **Deploy** and note the public URL for n8n. After changing Playwright paths, use **Clear build cache & deploy** once if the browser is still missing.
+
+`npm install` runs `postinstall` (`playwright install chromium`); the build command also installs **`chromium-headless-shell`** (what headless `chromium.launch()` uses) into the same browser directory.
 
 ### Option B: Blueprint
 

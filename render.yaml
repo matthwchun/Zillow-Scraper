@@ -4,10 +4,12 @@ services:
     runtime: node
     plan: starter
     healthCheckPath: /health
-    buildCommand: npm install && npx playwright install chromium
+    buildCommand: npm install && npx playwright install chromium chromium-headless-shell
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: "20"
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: "0"
       - key: API_KEY
         sync: false
