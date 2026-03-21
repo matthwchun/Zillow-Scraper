@@ -7,6 +7,11 @@ import {
   PLAYWRIGHT_CHANNEL,
   HEADFUL,
   ZILLOW_WARMUP,
+  ZILLOW_WARMUP_MS,
+  PAYMENT_DOM_WAIT_MS,
+  PAYMENT_DOM_WAIT_RANDOM_RANGE,
+  PAYMENT_DOM_WAIT_MS_MIN,
+  PAYMENT_DOM_WAIT_MS_MAX,
   PLAYWRIGHT_PROXY,
 } from "./lib/config.js";
 
@@ -98,7 +103,21 @@ const server = app.listen(PORT, () => {
   if (!API_KEY) console.warn("Warning: API_KEY is not set; POST routes will return 503.");
   if (PLAYWRIGHT_CHANNEL) console.log(`Playwright channel: ${PLAYWRIGHT_CHANNEL}`);
   if (HEADFUL) console.log("Headful browser (HEADFUL=1)");
-  if (!ZILLOW_WARMUP) console.log("Zillow homepage warm-up disabled (ZILLOW_WARMUP=0)");
+  if (ZILLOW_WARMUP) {
+    console.log(`Zillow homepage warm-up on (settle ${ZILLOW_WARMUP_MS}ms after hit)`);
+  } else {
+    console.log("Zillow homepage warm-up disabled (ZILLOW_WARMUP=0)");
+  }
+  console.log("Target navigation: waitUntil=domcontentloaded");
+  if (PAYMENT_DOM_WAIT_RANDOM_RANGE) {
+    console.log(
+      `Payment DOM wait: uniform random ${PAYMENT_DOM_WAIT_MS_MIN}–${PAYMENT_DOM_WAIT_MS_MAX}ms per /details scrape`,
+    );
+  } else {
+    console.log(
+      `Payment DOM budget PAYMENT_DOM_WAIT_MS=${PAYMENT_DOM_WAIT_MS} (±DOM_TIMING_JITTER_MS)`,
+    );
+  }
   if (PLAYWRIGHT_PROXY) {
     console.log("Outbound proxy enabled (PROXY_SERVER)");
   }

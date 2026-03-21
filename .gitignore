@@ -1,5 +1,7 @@
 node_modules/
 .env
+# Runtime I/O for CLI / n8n Execute Command (use body.json.example as template)
+body.json
 output.json
 *.log
 .DS_Store
