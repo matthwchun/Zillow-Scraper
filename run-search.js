@@ -16,6 +16,7 @@ import { cliLog } from "./lib/cli-log.js";
 import {
   CLI_RETRY_DELAY_MS,
   resolveCliRetryDelayAfterError,
+  isBlockedStyleError,
   ZILLOW_WARMUP,
   ZILLOW_WARMUP_MS,
   HEADFUL,
@@ -94,8 +95,8 @@ async function main() {
             afterAttempt: failedAttempt,
             nextAttempt: failedAttempt + 1,
             delayMs,
-            delayReason: /\b403\b/.test(err.message)
-              ? "403_backoff"
+            delayReason: isBlockedStyleError(err)
+              ? "blocked_backoff"
               : "default",
             error: err.message,
           });

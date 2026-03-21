@@ -100,7 +100,7 @@ For **local n8n** you can skip the HTTP server and drive the scraper with **two 
    - **In progress:** briefly `{ "success": false, "error": "Run in progress", ... }` then replaced by the final result.
    - The process exits **0** on success and **1** on failure, but **`output.json` is written before exit** so n8n can branch on JSON even when Execute Command reports failure.
 
-**Retries:** each CLI script makes up to **2** attempts (one retry after a pause). Default pause **`CLI_RETRY_DELAY_MS`** (**2500**). If the failure message looks like **HTTP 403**, the pause is a **uniform random** delay between **`CLI_RETRY_DELAY_403_MS_MIN`** and **`CLI_RETRY_DELAY_403_MS_MAX`** (defaults **2000**–**3000**). Stderr **`delayReason":"403_backoff"`** shows that path. Two browser “sessions” in one run usually mean the **first attempt failed** and a retry ran—not warm-up.
+**Retries:** each CLI script makes up to **2** attempts (one retry after a pause). Default pause **`CLI_RETRY_DELAY_MS`** (**2500**). If the failure message looks like **HTTP 403** or **429**, the pause is a **uniform random** delay between **`CLI_RETRY_DELAY_403_MS_MIN`** and **`CLI_RETRY_DELAY_403_MS_MAX`** (defaults **3000**–**5000**). Stderr **`delayReason":"blocked_backoff"`** shows that path (HTTP **403** or **429**). Two browser “sessions” in one run usually mean the **first attempt failed** and a retry ran—not warm-up. **`POST /search`** and **`POST /details`** use the same retry policy.
 
 Environment (`.env`): same Playwright-related variables as the server (`API_KEY` is **not** required for CLI—only for `POST /search` and `POST /details` on the API). CLI scripts log phases to **stderr** (`[zillow-cli …]`, `[zillow-browser …]`) for debugging.
 
@@ -363,7 +363,7 @@ Redeploy, check logs for **`Outbound proxy enabled`**, then retry your scrape.
   6. Slow down workflows (fewer requests per minute).
   7. Different network / time of day. On **Render**, use a **residential proxy** via **`PROXY_SERVER`** (see **Zillow on Render**).
 - **Terms of use:** ensure your use complies with Zillow’s policies and applicable law.
-- **Payment breakdown** (`/details`): values are read from the live page (several DOM strategies merged into one snapshot, single timed read). Embedded JSON fills gaps; when DOM returns a value it **overwrites** JSON. Zillow’s layout and hydration vary by listing, so numbers can occasionally disagree with what you see—tune **`PAYMENT_DOM_WAIT_MS`**, **`PAYMENT_DOM_SETTLE_MS`**, or **`PAYMENT_DEBUG=1`** if needed. Optional **`PAYMENT_DOM_WAIT_RANDOM_RANGE=1`** picks a **uniform random** total wait between **`PAYMENT_DOM_WAIT_MS_MIN`** and **`PAYMENT_DOM_WAIT_MS_MAX`** (defaults **3500**–**7000**) for the payment scroll budget each run.
+- **Payment breakdown** (`/details`): values are read from the live page (several DOM strategies merged into one snapshot, single timed read). Embedded JSON fills gaps; when DOM returns a value it **overwrites** JSON. Zillow’s layout and hydration vary by listing, so numbers can occasionally disagree with what you see—tune **`PAYMENT_DOM_WAIT_MS`**, **`PAYMENT_DOM_SETTLE_MS`**, or **`PAYMENT_DEBUG=1`** if needed. Optional **`PAYMENT_DOM_WAIT_RANDOM_RANGE=1`** picks a **uniform random** total wait between **`PAYMENT_DOM_WAIT_MS_MIN`** and **`PAYMENT_DOM_WAIT_MS_MAX`** (defaults **4000**–**7500**) for the payment scroll budget each run.
 
 ---
 
