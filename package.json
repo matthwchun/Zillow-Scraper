@@ -9,7 +9,10 @@
   },
   "scripts": {
     "start": "node server.js",
-    "postinstall": "playwright install chromium"
+    "postinstall": "playwright install chromium",
+    "run-search": "node run-search.js",
+    "run-detail": "node run-detail.js",
+    "run": "node run.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
